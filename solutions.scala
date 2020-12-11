@@ -11,6 +11,7 @@ var solutions: Seq[(Number, Number)] = Seq(
   (1753, 733),
   (556543474, 76096372),
   (1820, 3454189699072l),
+  (2494, 2306),
 )
 
 def task(num: Int)(solution: => (Number, Number)): Unit = {
@@ -155,3 +156,18 @@ task(10) ({
   combinationsTo(adapters.max)
 })
 
+task(11) ({
+  def pad(seats: Vector[String]): Vector[String] = (("."*(seats.head.size+2)) +: seats.map('.' + _ + '.') :+ ("."*(seats.head.size+2))).toVector
+  def iter(seats: Vector[String]): Vector[String] = pad(seats).sliding(3, 1).map(_.toList).toVector.map(_.transpose.sliding(3,1).toVector).toVector.map(_.map{sq: List[List[Char]] => {val flat = sq.flatten; (flat(4), (flat.take(4) ++ flat.drop(5)).count(_ == '#')) match {case ('L', 0) => '#'; case ('#', s) if s >= 4 => 'L'; case (x, _) => x}}}).map(_.mkString(""))
+  var seats = scala.io.Source.fromFile("adv11").getLines.toVector
+  var lastSeats = Vector[String]()
+  while (lastSeats != seats) {lastSeats = seats; seats = iter(seats)}
+  seats.map(_.count(_ == '#')).sum
+},{
+  def around(x0: Int, y0: Int, seats: Vector[String]): Int = Set((-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)).count{case (dx, dy) => try{Stream.from(1).map{i => seats(x0+i*dx)(y0+i*dy)}.dropWhile(_ == '.').head == '#'} catch {case _: IndexOutOfBoundsException => false}}
+  def iter(seats: Vector[String]): Vector[String] = seats.zipWithIndex.map{case (v, i) => v.zipWithIndex.map{case (e, j) => (e, around(i, j, seats)) match {case ('L', 0) => '#'; case ('#', s) if s >= 5 => 'L'; case (x, _) => x}}}.map(_.mkString(""))
+  var seats = scala.io.Source.fromFile("adv11").getLines.toVector
+  var lastSeats = Vector[String]()
+  while (lastSeats != seats) {lastSeats = seats; seats = iter(seats)}
+  seats.map(_.count(_ == '#')).sum
+})
