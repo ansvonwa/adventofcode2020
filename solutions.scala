@@ -12,6 +12,7 @@ var solutions: Seq[(Number, Number)] = Seq(
   (556543474, 76096372),
   (1820, 3454189699072l),
   (2494, 2306),
+  (582, 52069),
 )
 
 def task(num: Int)(solution: => (Number, Number)): Unit = {
@@ -171,3 +172,9 @@ task(11) ({
   while (lastSeats != seats) {lastSeats = seats; seats = iter(seats)}
   seats.map(_.count(_ == '#')).sum
 })
+
+task(12) (
+  scala.io.Source.fromFile("adv12").getLines.map(l => (l.head, l.drop(1).toInt)).foldLeft((0, 0, (1, 0))){case ((x: Int, y: Int, (dx: Int, dy: Int)), (c: Char, n: Int)) => c match {case 'E' => (x + n, y, (dx, dy)); case 'S' => (x, y - n, (dx, dy)); case 'W' => (x - n, y, (dx, dy)); case 'N' => (x, y + n, (dx, dy)); case 'F' => (x+n*dx, y+n*dy, (dx, dy)); case rl => (x, y, (rl match {case 'L' => n; case _ => 360-n}) match {case 90 => (-dy, dx); case 270 => (dy, -dx); case _ => (-dx, -dy)})}} match {case (x, y, _) => math.abs(x)+math.abs(y)}
+,
+  scala.io.Source.fromFile("adv12").getLines.map(l => (l.head, l.drop(1).toInt)).foldLeft((0, 0, (10, 1))){case ((x: Int, y: Int, (dx: Int, dy: Int)), (c: Char, n: Int)) => c match {case 'E' => (x, y, (dx+n, dy)); case 'S' => (x, y, (dx, dy-n)); case 'W' => (x, y, (dx-n, dy)); case 'N' => (x, y, (dx, dy+n)); case 'F' => (x+n*dx, y+n*dy, (dx, dy)); case rl => (x, y, (rl match {case 'L' => n; case _ => 360-n}) match {case 90 => (-dy, dx); case 270 => (dy, -dx); case _ => (-dx, -dy)})}} match {case (x, y, _) => math.abs(x)+math.abs(y)}
+)
