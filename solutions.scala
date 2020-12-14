@@ -181,7 +181,7 @@ task(12) (
 )
 
 task(13) (
-  scala.io.Source.fromFile("adv13").getLines.toList match {case List(time, list) => list.split(",").filter(_.matches("[0-9]+")).map(_.toInt).minBy(x => x-(x % time.toInt)) match {case x => x*(x-time.toInt%x)}}
+  scala.io.Source.fromFile("adv13").getLines.toList match {case List(time, list) => list.split(",").filter(_ != "x").map(_.toInt).minBy(x => x-(x % time.toInt)) match {case x => x*(x-time.toInt%x)}}
 ,
-  scala.io.Source.fromFile("adv13").getLines.toList(1).split(",").zipWithIndex.filter(_._1.matches("[0-9]+")).map{case (l, i) => l.toInt -> (l.toInt*20-i)%l.toInt}.foldLeft((0l, 1l)){case ((rem, fac), (bus, busRem)) => val x = (0 until bus).find(x => (rem+x*fac)%bus == busRem).get; (rem+x*fac, fac*bus)}._1
+  scala.io.Source.fromFile("adv13").getLines.toList(1).split(",").zipWithIndex.filter(_._1 != "x").map{case (l, i) => l.toInt -> (l.toInt*i-i)%l.toInt}.foldLeft((0l, 1l)){case ((rem, fac), (bus, busRem)) => val x = (0 until bus).find(x => (rem+x*fac)%bus == busRem).get; (rem+x*fac, fac*bus)}._1
 )
