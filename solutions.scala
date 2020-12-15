@@ -14,6 +14,7 @@ var solutions: Seq[(Number, Number)] = Seq(
   (2494, 2306),
   (582, 52069),
   (174, 780601154795940l),
+  (8570568288597l, 3289441921203l),
 )
 
 def task(num: Int)(solution: => (Number, Number)): Unit = {
@@ -184,4 +185,10 @@ task(13) (
   scala.io.Source.fromFile("adv13").getLines.toList match {case List(time, list) => list.split(",").filter(_ != "x").map(_.toInt).minBy(x => x-(x % time.toInt)) match {case x => x*(x-time.toInt%x)}}
 ,
   scala.io.Source.fromFile("adv13").getLines.toList(1).split(",").zipWithIndex.filter(_._1 != "x").map{case (l, i) => l.toInt -> (l.toInt*i-i)%l.toInt}.foldLeft((0l, 1l)){case ((rem, fac), (bus, busRem)) => val x = (0 until bus).find(x => (rem+x*fac)%bus == busRem).get; (rem+x*fac, fac*bus)}._1
+)
+
+task(14) (
+  scala.io.Source.fromFile("adv14").getLines.map(s => if (s.startsWith("mask = ")) s.drop(7) else s.drop(4).split("] = ") match {case Array(idx, value) => idx.toInt -> value.toLong}).foldLeft((Map[Int, Long](), "")){case ((mem, mask), s: String) => mem -> s; case ((mem, mask), (idx: Int, value: Long)) => (mem + (idx -> mask.foldRight((value, 1l, 0l)){case ('X', (v, p, res)) => (v/2, p*2, res + p*(v%2)); case (d, (v, p, res)) => (v/2, p*2, res + p*(d - '0'));}._3), mask); case _ => ???}._1.values.sum
+,
+  scala.io.Source.fromFile("adv14").getLines.map(s => if (s.startsWith("mask = ")) s.drop(7) else s.drop(4).split("] = ") match {case Array(idx, value) => idx.toLong -> value.toLong}).foldLeft((Map[Long, Long](), "")){case ((mem, mask), s: String) => mem -> s; case ((mem, mask), (idx: Long, value: Long)) => (mem.toMap[Long, Long] ++ mask.foldRight((idx, 1l, Set[Long](0l))){case ('X', (i, p, keys)) => (i/2, p*2, keys ++ keys.map(_+p)); case ('1', (i, p, keys)) => (i/2, p*2, keys.map(_ + p)); case (_, (i, p, keys)) => (i/2, p*2, keys.map(_ + p*(i%2)))}._3.map(_ -> value).toMap[Long, Long], mask); case _ => ???}._1.values.sum
 )
