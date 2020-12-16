@@ -16,6 +16,7 @@ var solutions: Seq[(Number, Number)] = Seq(
   (174, 780601154795940l),
   (8570568288597l, 3289441921203l),
   (929, 16671510),
+  (29019, 517827547723l),
 )
 
 def task(num: Int)(solution: => (Number, Number)): Unit = {
@@ -214,3 +215,15 @@ task(15) ({
   //println("time: " + (System.currentTimeMillis - start))
   last
 })
+
+task(16) {
+  val valid = scala.io.Source.fromFile("adv16").getLines.takeWhile(_.nonEmpty).map(s => s.drop(s.indexOf(":")+2)).flatMap(_.split(" or ")).map(_.split("-").map(_.toInt) match {case Array(f, t) => (f to t).toSet}).reduce(_ | _)
+  (
+    scala.io.Source.fromFile("adv16").getLines.dropWhile(_ != "nearby tickets:").drop(1).map(_.split(",").map(_.toInt)).flatten.filterNot(valid).sum
+  ,{
+    val classes = scala.io.Source.fromFile("adv16").getLines.takeWhile(_.nonEmpty).map(s => s.takeWhile(_!=':') -> (s.drop(s.indexOf(":")+2)).split(" or ").map(_.split("-").map(_.toInt) match {case Array(f, t) => (f to t).toSet}).reduce(_ | _)).toSeq
+    var possibleClasses = scala.io.Source.fromFile("adv16").getLines.dropWhile(_ != "nearby tickets:").drop(1).map(_.split(",").map(_.toInt)).filter(_.forall(valid)).toSeq.transpose.map(_.toSet).map(s => classes.filter(s subsetOf _._2).map(_._1).toVector).toVector
+    while (possibleClasses.exists(_.size > 1)) possibleClasses.filter(_.size == 1).foreach{case Vector(fix) => possibleClasses = possibleClasses.map(p => if (p.size <= 1) p else p.filter(_ != fix))}
+    (possibleClasses.flatten zip scala.io.Source.fromFile("adv16").getLines.dropWhile(_ != "your ticket:").drop(1).next.split(",").map(_.toInt)).filter(_._1.startsWith("departure")).map(_._2.toLong).product
+  })
+}
