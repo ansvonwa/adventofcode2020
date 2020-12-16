@@ -15,6 +15,7 @@ var solutions: Seq[(Number, Number)] = Seq(
   (582, 52069),
   (174, 780601154795940l),
   (8570568288597l, 3289441921203l),
+  (929, 16671510),
 )
 
 def task(num: Int)(solution: => (Number, Number)): Unit = {
@@ -192,3 +193,24 @@ task(14) (
 ,
   scala.io.Source.fromFile("adv14").getLines.map(s => if (s.startsWith("mask = ")) s.drop(7) else s.drop(4).split("] = ") match {case Array(idx, value) => idx.toLong -> value.toLong}).foldLeft((Map[Long, Long](), "")){case ((mem, mask), s: String) => mem -> s; case ((mem, mask), (idx: Long, value: Long)) => (mem.toMap[Long, Long] ++ mask.foldRight((idx, 1l, Set[Long](0l))){case ('X', (i, p, keys)) => (i/2, p*2, keys ++ keys.map(_+p)); case ('1', (i, p, keys)) => (i/2, p*2, keys.map(_ + p)); case (_, (i, p, keys)) => (i/2, p*2, keys.map(_ + p*(i%2)))}._3.map(_ -> value).toMap[Long, Long], mask); case _ => ???}._1.values.sum
 )
+
+task(15) ({
+  var lastIdx = Seq(16,1,0,18,12,14).zipWithIndex.toMap; var last = 19; for (i <- lastIdx.size until 2020-1) {val next = i-lastIdx.getOrElse(last, i); lastIdx += (last ->i); last = next}
+  last
+},{
+  //val start = System.currentTimeMillis
+  //var lastIdx = scala.collection.mutable.Map[Int, Int](Seq(16,1,0,18,12,14).zipWithIndex.toMap.toArray: _*); var last = 19; for (i <- lastIdx.size until 30000000-1) {val next = i-lastIdx.getOrElse(last, i); lastIdx += last ->i; last = next} // Map[Int, _] is much slower than Array[_]
+
+  val n = 30000000
+  var lastIdx = new Array[Int](n)
+  Seq(16,1,0,18,12,14).zipWithIndex.foreach{case (n, i) => lastIdx(n) = i+1}
+  var last = 19
+  for (i <- 6 until n-1) {
+    val l = lastIdx(last)
+    val next = if (l == 0) 0 else i-(l-1)
+    lastIdx(last) = i+1
+    last = next
+  }
+  //println("time: " + (System.currentTimeMillis - start))
+  last
+})
