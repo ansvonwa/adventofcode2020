@@ -22,6 +22,8 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          ref: build-status
 
       - name: set up git
         run: |
@@ -29,6 +31,10 @@ jobs:
           git config user.email "<>"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
           git pull
+          git status
+          git checkout build-status
+          git log --all --decorate
+          git merge origin/master
 
       - name: Install scala and run ./genstatus.scala
         run: |
@@ -37,9 +43,10 @@ jobs:
           sdk install scala
           whereis scala
           scala -version
+          echo "\n\n=================================="
           scala ./genstatus.scala
 
-      - name: foo
+      - name: push status
         run: |
-          echo foo
+          git push
 

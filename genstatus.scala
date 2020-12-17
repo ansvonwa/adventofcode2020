@@ -5,7 +5,7 @@ import scala.language.postfixOps
 
 "git checkout build-status" !!
 
-"git merge --ff master" !!
+"git merge --ff origin/master" !!
 
 reflect.io.File("status.svg")
   .writeAll(
