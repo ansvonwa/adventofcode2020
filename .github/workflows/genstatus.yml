@@ -23,9 +23,6 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Install scala
-        run: sudo apt install scala
-
       - name: set up git
         run: |
           git config user.name "GitHub Actions Bot"
@@ -33,7 +30,16 @@ jobs:
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
           git pull
 
-      - name: generate svg
+      - name: Install scala and run ./genstatus.scala
         run: |
-          ./genstatus.scala
+          curl -s "https://get.sdkman.io" | bash
+          source "/home/runner/.sdkman/bin/sdkman-init.sh"
+          sdk install scala
+          whereis scala
+          scala -version
+          scala ./genstatus.scala
+
+      - name: foo
+        run: |
+          echo foo
 
