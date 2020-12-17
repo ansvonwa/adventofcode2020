@@ -50,6 +50,6 @@ jobs:
       - name: push status
         run: |
           git add status.svg
-          git commit -m "update status.svg"
-          git push
+          git commit -m "update status.svg" || echo "status.svg did not change"
+          git push || echo "nothing to push"
 
