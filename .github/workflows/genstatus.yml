@@ -31,6 +31,7 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          git pull
 
       - name: generate svg
         run: |
