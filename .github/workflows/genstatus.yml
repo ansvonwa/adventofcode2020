@@ -33,5 +33,6 @@ jobs:
           git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
 
       - name: generate svg
+        run: |
           ./genstatus.scala
 
