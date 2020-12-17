@@ -3,9 +3,6 @@
 import scala.sys.process._
 import scala.language.postfixOps
 
-"git checkout build-status" !!
-
-"git merge --ff origin/master" !!
 
 reflect.io.File("status.svg")
   .writeAll(
@@ -30,8 +27,4 @@ reflect.io.File("status.svg")
   )
 
 Thread.sleep(200)
-
-"git add status.svg" !!
-
-Seq("git", "commit", "-m", "update status.svg") !!
 

@@ -49,5 +49,7 @@ jobs:
 
       - name: push status
         run: |
+          git add status.svg
+          git commit -m "update status.svg"
           git push
 
