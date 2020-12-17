@@ -17,6 +17,7 @@ var solutions: Seq[(Number, Number)] = Seq(
   (8570568288597l, 3289441921203l),
   (929, 16671510),
   (29019, 517827547723l),
+  (380, 2332),
 )
 
 def task(num: Int)(solution: => (Number, Number)): Unit = {
@@ -227,3 +228,19 @@ task(16) {
     (possibleClasses.flatten zip scala.io.Source.fromFile("adv16").getLines.dropWhile(_ != "your ticket:").drop(1).next.split(",").map(_.toInt)).filter(_._1.startsWith("departure")).map(_._2.toLong).product
   })
 }
+
+task(17) ({
+  def around(x: Int, y: Int, z: Int, seats: Vector[Vector[String]]): Int = (Seq((-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)).flatMap{case (i,j) => (-1 to 1).map(k => (i,j,k))} :+ (0, 0, -1) :+ (0, 0, 1)).count{case (dx, dy, dz) => seats(x+1+dx)(y+1+dy)(z+1+dz) == '#'}
+  def pad(seats: Vector[Vector[String]]): Vector[Vector[String]] = Vector.fill(seats.head.size+2)("."*(seats.head.size+2)) +: seats.map(s => ((("."*(s.head.size+2)) +: s.map('.' + _ + '.')) :+ ("."*(s.head.size+2))).toVector) :+ Vector.fill(seats.head.size+2)("."*(seats.head.size+2))
+  def iter(seats: Vector[Vector[String]]): Vector[Vector[String]] = {val ps = pad(seats); val pps = pad(ps); ps.zipWithIndex.map{case (v, i) => v.zipWithIndex.map{case (w, j) => w.zipWithIndex.map{case (e, k) => (e, around(i, j, k, pps)) match {case ('#', s) => if (s == 2 || s == 3) '#' else '.'; case (_, s) => if (s==3) '#' else '.'}}}}.map(_.map(_.mkString("")))}
+  var seats = Vector(scala.io.Source.fromFile("adv17").getLines.toVector)
+  for (_ <- 1 to 6) seats = iter(seats)
+  seats.flatten.flatten.count(_ == '#')
+},{
+  def around(x: Int, y: Int, z: Int, w: Int, seats: Vector[Vector[Vector[String]]]): Int = {((Seq((-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)).flatMap{case (i,j) => (-1 to 1).map(k => (i,j,k))} :+ (0, 0, -1) :+ (0, 0, 1)).flatMap{case (i,j,k) => (-1 to 1).map(l => (i,j,k,l))} :+ (0,0,0,-1) :+ (0,0,0,1)).count{case (dx, dy, dz, dw) => seats(x+1+dx)(y+1+dy)(z+1+dz)(w+1+dw) == '#'}}
+  def pad(hseats: Vector[Vector[Vector[String]]]): Vector[Vector[Vector[String]]] = Vector.fill(hseats.head.size+2, hseats.head.head.size+2)("."*(hseats.head.head.size+2)) +: hseats.map(seats => Vector.fill(seats.head.size+2)("."*(seats.head.size+2)) +: seats.map(s => ((("."*(s.head.size+2)) +: s.map('.' + _ + '.')) :+ ("."*(s.head.size+2))).toVector) :+ Vector.fill(seats.head.size+2)("."*(seats.head.size+2))) :+ Vector.fill(hseats.head.size+2, hseats.head.head.size+2)("."*(hseats.head.head.size+2))
+  def iter(seats: Vector[Vector[Vector[String]]]): Vector[Vector[Vector[String]]] = {val ps = pad(seats); val pps = pad(ps); ps.zipWithIndex.map{case (v, i) => v.zipWithIndex.map{case (w, j) => w.zipWithIndex.map{case (u, k) => u.zipWithIndex.map{case (e, l) => (e, around(i, j, k, l, pps)) match {case ('#', s) => if (s == 2 || s == 3) '#' else '.'; case (_, s) => if (s==3) '#' else '.'}}}}}.map(_.map(_.map(_.mkString(""))))}
+  var seats = Vector(Vector(scala.io.Source.fromFile("adv17").getLines.toVector))
+  for (_ <- 1 to 6) seats = iter(seats)
+  seats.flatten.flatten.flatten.count(_ == '#')
+})
