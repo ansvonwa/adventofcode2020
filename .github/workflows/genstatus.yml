@@ -34,7 +34,7 @@ jobs:
           git status
           git checkout build-status
           git log --all --decorate
-          git merge origin/master
+          git merge origin/master --allow-unrelated-histories
 
       - name: Install scala and run ./genstatus.scala
         run: |
