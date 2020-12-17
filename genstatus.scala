@@ -18,7 +18,7 @@ reflect.io.File("status.svg")
                 .replace("\u001B[0m", "</text><text>") +
             "</text>"
         }
-        .mkString("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\""+(lines.size*30)+"\">\n", "\n", "</svg>")
+        .mkString("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\""+(lines.size*30)+"\">\n", "\n", "</svg>")
     } catch {
       case e: Exception =>
         e.printStackTrace()
