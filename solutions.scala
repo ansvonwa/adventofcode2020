@@ -18,6 +18,8 @@ var solutions: Seq[(Number, Number)] = Seq(
   (929, 16671510),
   (29019, 517827547723l),
   (380, 2332),
+  (7293529867931l, -1),
+  (203, 304),
 )
 
 def task(num: Int)(solution: => (Number, Number)): Unit = {
@@ -244,3 +246,37 @@ task(17) ({
   for (_ <- 1 to 6) seats = iter(seats)
   seats.flatten.flatten.flatten.count(_ == '#')
 })
+
+task(19) {
+  def countMatches(rawInput: Seq[String]): Int = {
+    val rules = rawInput.takeWhile(_.contains(":")).map(s => s.split(": ").toList match {
+      case List(n, l) => n -> l.split(" \\| ").toList.map(_.replace("\"", "").split(" ").toList)
+    }).toMap
+    var known: Map[(String, String), Boolean] = Map()
+    def matches(s: String, rule: String): Boolean = known.get((s, rule)) match {
+      case Some(b) => b
+      case None =>
+        val res = rules(rule).exists{
+          case List(r) if r.matches("[0-9]+") => matches(s, r)
+          case List(c) => s == c
+          case List(x, y) =>
+            (1 until s.size).exists(i =>
+                matches(s.take(i), x) && matches(s.drop(i), y)
+            )
+        }
+        known += (s, rule) -> res
+        res
+      }
+    rawInput.dropWhile(_.contains(":")).count(matches(_, "0"))
+  }
+  val input = scala.io.Source.fromFile("adv19").getLines.toSeq
+  (
+    countMatches(input),
+    countMatches("1111: 42 11" +: input.map{
+      case "11: 42 31" => "11: 42 31 | 1111 31"
+      case "8: 42" => "8: 42 | 42 8"
+      case line => line
+    })
+  )
+}
+
