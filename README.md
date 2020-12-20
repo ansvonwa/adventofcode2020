@@ -5,4 +5,5 @@ solutions are in `solutions.scala`
 
 If you have scala installed, run `./solutions.scala`.
 
+## Current Status
 ![Status](https://raw.githubusercontent.com/ansvonwa/adventofcode2020/build-status/status.svg)
